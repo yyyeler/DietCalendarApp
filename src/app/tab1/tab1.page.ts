@@ -4,6 +4,8 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardContent, I
 import { DailyValues, MealTypes, MealValues } from '../data/foodValues';
 import { chevronBackOutline, chevronForwardCircleOutline, chevronForwardOutline, pencilOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { Router } from '@angular/router';
+import { StorageService } from '../services/storage';
 
 
 @Component({
@@ -15,9 +17,9 @@ import { addIcons } from 'ionicons';
 export class Tab1Page implements OnInit {
 
   protected postFixes = signal<string[]>(["kcal","gram"]);
-  protected allData = signal<Map<string,DailyValues>>(new Map<string,DailyValues>());
   protected dateFormat = signal<string>('d MMMM yyyy');
   protected shownData = signal<DailyValues>(new DailyValues());
+  
   protected totalCalorie = computed<number>(() =>
     this.shownData().morningIntake.calorieIntake +
     this.shownData().noonIntake.calorieIntake +  
@@ -48,57 +50,27 @@ export class Tab1Page implements OnInit {
   forwardIcon = chevronForwardCircleOutline;
   pencilIcon = pencilOutline;
   
-  constructor() {
+  constructor(private router: Router, private storageService: StorageService) {
     addIcons({ chevronBackOutline, chevronForwardOutline, pencilOutline });
   }
+
   ngOnInit(): void { 
-    this.allData.set(this.getDataFromLocalStorage());
     this.setData(new Date());
     this.meals.set(this.getMealTypes());
   }
 
-  private getMockData() : DailyValues {
-    let data = new DailyValues();
-
-    data.date = new Date();
-    data.morningIntake = this.getIntakeMockData(5);
-    data.noonIntake = this.getIntakeMockData(8);
-    data.eveningIntake = this.getIntakeMockData(7);
-    data.extraIntake = this.getIntakeMockData(2);
-    data.burntEnergy = 1500;
-
-    return data;
-  }
-
-  private getIntakeMockData(value : number) : MealValues {
-    let data = new MealValues();
-
-    data.calorieIntake = 100*value;
-    data.carbsIntake = 10*value;
-    data.proteinIntake = 6*value;
-    data.fatIntake = 4*value;
-
-    return data;
-  }
-  
   private getMealTypes(): MealTypes[]{
     let arr : MealTypes[] = [];
-    arr.push({code: "mo", title: "Sabah", intakeType:"morningIntake"});
-    arr.push({code: "no", title: "Öğle", intakeType:"noonIntake"});
-    arr.push({code: "ev", title: "Akşam", intakeType:"eveningIntake"});
-    arr.push({code: "ex", title: "Ekstra", intakeType:"extraIntake"});
+    arr.push({title: "Sabah", intakeType:"morningIntake"});
+    arr.push({title: "Öğle", intakeType:"noonIntake"});
+    arr.push({title: "Akşam", intakeType:"eveningIntake"});
+    arr.push({title: "Ekstra", intakeType:"extraIntake"});
 
     return arr;
   }
 
-  private getDataFromLocalStorage(): Map<string,DailyValues> {
-    let a = this.formatDateKey(new Date());
-    let b = new Map<string,DailyValues>();
-    b.set(a,this.getMockData());
-
-    console.log(b);
-
-    return  b;
+  private async getDataFromLocalStorage(key: string) : Promise<DailyValues> {
+    return await this.storageService.get(key);
   }
 
   protected checkAndGetFromTheData(diff: number){
@@ -108,13 +80,13 @@ export class Tab1Page implements OnInit {
     this.setData(willDate);   
   }
 
-  protected setData(willDate : Date){
+  protected async setData(willDate : Date){
     let key = this.formatDateKey(willDate);
-    if(this.allData().get(key) != null && this.allData().get(key) != undefined) this.shownData.set(this.allData().get(key)!);
+    let data = await this.getDataFromLocalStorage(key);
+    if(data != null && data != undefined) this.shownData.set(data!);
     else {
       let newItem = new DailyValues();
       newItem.date = willDate;
-      this.allData().set(key, newItem);
       this.shownData.set(newItem);
     }
   }
@@ -128,10 +100,10 @@ export class Tab1Page implements OnInit {
   }
 
   private formatDateKey(date : Date) : string {
-     return formatDate(date, 'dd-MM-yyyy', 'en-US');
+     return formatDate(date, 'MM-dd-yyyy', 'en-US');
   }
 
   protected editMeal(code :string){
-    console.log(code);
+    this.router.navigate(['/edit-meal', code, this.formatDateKey(this.shownData().date)]);
   }
 }

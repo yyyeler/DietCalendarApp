@@ -34,7 +34,12 @@ export class DailyValues {
 }
 
 export type MealTypes = {
-    code : string
     title : string;
     intakeType: 'morningIntake' | 'noonIntake' | 'eveningIntake' | 'extraIntake';
 }
+
+export type IntakeTypes = {
+    title : string;
+    intakeType: 'calorieIntake' | 'proteinIntake' | 'carbsIntake' | 'fatIntake';
+}
+

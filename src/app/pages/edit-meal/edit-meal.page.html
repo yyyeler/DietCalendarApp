@@ -1,0 +1,66 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Düzenle</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">editMeal</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="2">
+          <ion-button expand="block" fill="outline" (click)="close()">
+            <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col size="8">
+          <ion-card-title style="text-align: center; margin: 0;">
+            {{ shownData().date | date: dateFormat() }}
+          </ion-card-title>
+        </ion-col>
+      </ion-row>
+    </ion-grid>    
+</ion-card>
+
+  <ion-card>
+    <ion-card-title style="text-align: center; margin: 1rem;">
+      {{ mealTitle() }}
+    </ion-card-title>
+  </ion-card>
+
+@for(intake of intakes(); track $index) {
+  <ion-card>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="10">
+            <ion-input 
+            type="number" 
+            inputmode="decimal" 
+            [label]="intake.title" 
+            labelPlacement="stacked" 
+            fill="outline" 
+            placeholder="0"
+            min="0"
+            max="10000"
+            [(ngModel)]="currentMeal[intake.intakeType]">
+          </ion-input>
+        </ion-col>
+        <ion-col size="2">
+          {{ intake.intakeType == "calorieIntake" ? postFixes()[0] : postFixes()[1]}}
+        </ion-col>
+      </ion-row>
+    </ion-grid>    
+  </ion-card>
+}
+  <ion-card>
+     <ion-button expand="block" (click)="save()">
+        Kaydet
+      </ion-button>
+  </ion-card>
+</ion-content>
