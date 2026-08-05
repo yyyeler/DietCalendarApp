@@ -1,17 +1,79 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 1
+      Günlük Değerler
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-card>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="2">
+          <ion-button expand="block" fill="outline" (click)="showPreviousDay()">
+            <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col size="8">
+          <ion-card-title style="text-align: center; margin: 0;">
+            {{ shownData().date | date: dateFormat() }}
+          </ion-card-title>
+        </ion-col>
+        <ion-col size="2">
+        <ion-button expand="block" fill="outline" (click)="showNextDay()">
+          <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+      </ion-row>
+    </ion-grid>    
+</ion-card>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Toplam</ion-card-title>
+       <ion-card-subtitle>
+        Kalori : {{ totalCalorie() + postFixes()[0] }}
+      </ion-card-subtitle>
+       <ion-card-subtitle>
+       Yakılan Kalori : {{ shownData().burntEnergy +  postFixes()[0] }}
+       </ion-card-subtitle> 
+       <ion-card-subtitle [ngStyle]="{'color': (totalCalorie() > shownData().burntEnergy)  ? 'red' : 'green'}">
+       Kalori Açığı : {{ (shownData().burntEnergy - totalCalorie()) +  postFixes()[0] }}
+       </ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    Karbonhidrat : {{ totalCarb() + postFixes()[1] }} |
+    Protein : {{ totalProtein() + postFixes()[1] }} |
+    Yağ : {{ totalFat() + postFixes()[1] }}  
+  </ion-card-content>
+</ion-card>
+
+@for(meal of meals(); track $index) {
+  <ion-card>
+    <ion-card-header>
+      <ion-grid class="ion-no-padding" style="width: 100%;">
+        <ion-row class="ion-align-items-center ion-justify-content-between">
+          <ion-col size="auto" style="text-align: left;">
+            <ion-card-title style="margin: 0;">{{ meal.title }}</ion-card-title>
+          </ion-col>
+          <ion-col size="auto" style="text-align: right;">
+            <ion-button expand="block" fill="outline" (click)="editMeal(meal.code)">
+              <ion-icon slot="icon-only" [icon]="pencilIcon"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <ion-card-subtitle>
+        Kalori : {{ shownData()[meal.intakeType].calorieIntake + postFixes()[0] }}
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      Karbonhidrat : {{ shownData()[meal.intakeType].carbsIntake + postFixes()[1] }} |
+      Protein : {{ shownData()[meal.intakeType].proteinIntake + postFixes()[1] }} |
+      Yağ : {{ shownData()[meal.intakeType].fatIntake + postFixes()[1] }} 
+    </ion-card-content>
+  </ion-card>
+}
 </ion-content>
+

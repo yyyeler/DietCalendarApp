@@ -1,0 +1,40 @@
+export interface MealValues {
+    calorieIntake: number;
+    proteinIntake: number;
+    carbsIntake: number;
+    fatIntake: number;
+}
+
+export class MealValues {
+    constructor(){
+        this.calorieIntake = 0;
+        this.proteinIntake = 0;
+        this.carbsIntake = 0;
+        this.fatIntake = 0;
+    }
+}
+
+export interface DailyValues {
+    date: Date;
+    morningIntake: MealValues;
+    noonIntake: MealValues;
+    eveningIntake: MealValues;
+    extraIntake: MealValues;
+    burntEnergy: number;
+}
+
+export class DailyValues {
+    constructor(){
+        this.morningIntake = new MealValues();
+        this.noonIntake = new MealValues();
+        this.eveningIntake = new MealValues();
+        this.extraIntake = new MealValues();
+        this.burntEnergy = 0;
+    }
+}
+
+export type MealTypes = {
+    code : string
+    title : string;
+    intakeType: 'morningIntake' | 'noonIntake' | 'eveningIntake' | 'extraIntake';
+}
