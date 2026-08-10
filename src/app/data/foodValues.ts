@@ -1,4 +1,6 @@
 export interface MealValues {
+    calorieBurnt: number;
+    calorieDef: number;
     calorieIntake: number;
     proteinIntake: number;
     carbsIntake: number;
@@ -11,6 +13,8 @@ export class MealValues {
         this.proteinIntake = 0;
         this.carbsIntake = 0;
         this.fatIntake = 0;
+        this.calorieBurnt = 0;
+        this.calorieDef = 0;
     }
 }
 
@@ -33,6 +37,14 @@ export class DailyValues {
     }
 }
 
+export interface Criteria {
+    showing: string;
+    time: string;
+}
+
+export class Criteria {}
+
+
 export type MealTypes = {
     title : string;
     intakeType: 'morningIntake' | 'noonIntake' | 'eveningIntake' | 'extraIntake';
@@ -43,3 +55,7 @@ export type IntakeTypes = {
     intakeType: 'calorieIntake' | 'proteinIntake' | 'carbsIntake' | 'fatIntake';
 }
 
+export type Decode = {
+    code : string;
+    val : string;
+}

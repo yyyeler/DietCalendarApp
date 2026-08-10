@@ -1,17 +1,96 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 2
+      Özet Verilerim
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col>
+          <ion-card-title style="text-align: center; margin: 0;">
+            {{ 'Kriterler' }}
+          </ion-card-title>
+        </ion-col>
+      </ion-row>
+       <ion-row class="ion-align-items-center">
+          <ion-col>
+              <ion-item>
+                <ion-select label="Görüntüleme Seçeneği" placeholder="Seç" [(ngModel)]="krt().showing" (ionChange)="showingOptionChanged()" >
+                  @for (item of showingOptions(); track $index) { <ion-select-option [value]="item.code">{{ item.val }}</ion-select-option>  }
+                </ion-select>
+              </ion-item>
+          </ion-col>
+        </ion-row>
+         <ion-row class="ion-align-items-center">
+        <ion-col>
+          <ion-item>
+                <ion-select label="Aralık Seçeneği" placeholder="Seç" [(ngModel)]="krt().time"  (ionChange)="timeOptionChanged()">
+                 @for (item of timeOptions(); track $index) { <ion-select-option [value]="item.code">{{ item.val }}</ion-select-option> }
+                </ion-select>
+              </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>    
+</ion-card>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <ion-card>
+    <ion-grid>
+       <ion-row class="ion-align-items-center">
+        <ion-col>
+          <ion-card-title style="text-align: center; margin: 0;">
+            {{ 'Ortalama Değerler' }}
+          </ion-card-title>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-center ion-font-size-small">
+        <ion-col size="3"> {{ titles()[0] + ' : ' }} </ion-col>
+        <ion-col size="3"> {{ getAllTotalVals('calorieIntake') + postFixes()[0] }} </ion-col>
+        <ion-col size="3"> {{ titles()[1] + ' : ' }} </ion-col>
+        <ion-col size="3"> {{ getAllTotalVals('calorieBurnt') + postFixes()[0]}} </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-center ion-font-size-small">
+        <ion-col size="3"> {{ titles()[2] + ' : ' }} </ion-col>
+        <ion-col size="3"> {{ getAllTotalVals('calorieDef') + postFixes()[0] }} </ion-col>
+        <ion-col size="3"> {{ titles()[3] + ' : ' }} </ion-col>
+        <ion-col size="3"> {{ getAllTotalVals('proteinIntake') + postFixes()[1]}} </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="3"> {{ titles()[4] + ' : ' }}  </ion-col>
+        <ion-col size="3"> {{ getAllTotalVals('carbsIntake') + postFixes()[1] }} </ion-col>
+        <ion-col size="3"> {{ titles()[5] + ' : '  }} </ion-col>
+        <ion-col size="3"> {{ getAllTotalVals('fatIntake')  + postFixes()[1] }} </ion-col>
+      </ion-row>
+    </ion-grid>    
+  </ion-card>
+
+
+  @for(item of dataList(); track $index){
+    <ion-card>
+      <ion-grid>
+        <ion-row class="ion-align-items-center">
+          <ion-col>
+            <ion-card-title style="text-align: center; margin: 0;">
+              {{ item.date | date: dateFormat() }}
+            </ion-card-title>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-align-items-center ion-font-size-small">
+          <ion-col size="3"> {{ titles()[0] + ' : ' }} </ion-col>
+          <ion-col size="3"> {{ getTotalVals(item,'calorieIntake') + postFixes()[0] }} </ion-col>
+          <ion-col size="3"> {{ titles()[3] + ' : ' }} </ion-col>
+          <ion-col size="3"> {{ getTotalVals(item,'proteinIntake') + postFixes()[1]}} </ion-col>
+        </ion-row>
+        <ion-row class="ion-align-items-center">
+          <ion-col size="3"> {{ titles()[4] + ' : ' }}  </ion-col>
+          <ion-col size="3"> {{ getTotalVals(item,'carbsIntake') + postFixes()[1] }} </ion-col>
+          <ion-col size="3"> {{ titles()[5] + ' : '  }} </ion-col>
+          <ion-col size="3"> {{ getTotalVals(item,'fatIntake')  + postFixes()[1] }} </ion-col>
+        </ion-row>
+      </ion-grid>    
+    </ion-card>
+  }
 </ion-content>

@@ -23,25 +23,29 @@ export class Tab1Page implements OnInit {
   protected totalCalorie = computed<number>(() =>
     this.shownData().morningIntake.calorieIntake +
     this.shownData().noonIntake.calorieIntake +  
-    this.shownData().eveningIntake.calorieIntake 
+    this.shownData().eveningIntake.calorieIntake +
+    this.shownData().extraIntake.calorieIntake 
   );
 
   protected totalProtein = computed<number>(() =>
     this.shownData().morningIntake.proteinIntake +
-    this.shownData().noonIntake.proteinIntake+  
-    this.shownData().eveningIntake.proteinIntake 
+    this.shownData().noonIntake.proteinIntake +  
+    this.shownData().eveningIntake.proteinIntake +  
+    this.shownData().extraIntake.proteinIntake 
   );
 
   protected totalCarb = computed<number>(() =>
     this.shownData().morningIntake.carbsIntake +
     this.shownData().noonIntake.carbsIntake +  
-    this.shownData().eveningIntake.carbsIntake 
+    this.shownData().eveningIntake.carbsIntake +  
+    this.shownData().extraIntake.carbsIntake 
   );
 
   protected totalFat = computed<number>(() =>
     this.shownData().morningIntake.fatIntake  +
     this.shownData().noonIntake.fatIntake +  
-    this.shownData().eveningIntake.fatIntake 
+    this.shownData().eveningIntake.fatIntake +  
+    this.shownData().extraIntake.fatIntake 
   );
 
   protected meals = signal<MealTypes[]>([]);
@@ -106,4 +110,5 @@ export class Tab1Page implements OnInit {
   protected editMeal(code :string){
     this.router.navigate(['/edit-meal', code, this.formatDateKey(this.shownData().date)]);
   }
+
 }
