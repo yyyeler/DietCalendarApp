@@ -1,18 +1,19 @@
 import { DatePipe, formatDate, NgStyle } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonGrid, IonRow, IonCol, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonInput } from '@ionic/angular/standalone';
 import { DailyValues, MealTypes, MealValues } from '../data/foodValues';
 import { chevronBackOutline, chevronForwardCircleOutline, chevronForwardOutline, pencilOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { Router } from '@angular/router';
 import { StorageService } from '../services/storage';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardContent, IonCardHeader, IonCardTitle, DatePipe, IonCardSubtitle, NgStyle, IonGrid, IonRow, IonCol, IonButton, IonIcon],
+  imports: [FormsModule ,IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardContent, IonCardHeader, IonCardTitle, DatePipe, IonCardSubtitle, NgStyle, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonInput],
 })
 export class Tab1Page implements OnInit {
 
@@ -49,6 +50,7 @@ export class Tab1Page implements OnInit {
   );
 
   protected meals = signal<MealTypes[]>([]);
+  protected isEdit = signal<boolean>(false);
 
   backIcon = chevronBackOutline;
   forwardIcon = chevronForwardCircleOutline;
@@ -109,6 +111,15 @@ export class Tab1Page implements OnInit {
 
   protected editMeal(code :string){
     this.router.navigate(['/edit-meal', code, this.formatDateKey(this.shownData().date)]);
+  }
+
+  protected openEdit(){
+    this.isEdit.set(true);
+  }
+
+  protected saveBurntValue(){
+    this.storageService.set(this.formatDateKey(this.shownData().date), this.shownData());
+    this.isEdit.set(false);
   }
 
 }

@@ -36,11 +36,47 @@
         Kalori : {{ totalCalorie() + postFixes()[0] }}
       </ion-card-subtitle>
        <ion-card-subtitle>
-       Yakılan Kalori : {{ shownData().burntEnergy +  postFixes()[0] }}
-       </ion-card-subtitle> 
-       <ion-card-subtitle [ngStyle]="{'color': (totalCalorie() > shownData().burntEnergy)  ? 'red' : 'green'}">
-       Kalori Açığı : {{ (shownData().burntEnergy - totalCalorie()) +  postFixes()[0] }}
-       </ion-card-subtitle>
+        @if(isEdit()){
+          <ion-grid class="ion-no-padding" style="width: 100%;">
+            <ion-row class="ion-align-items-center">
+              <ion-col size="auto" style="text-align: left;">
+                Yakılan Kalori : 
+              </ion-col>
+              <ion-col size="auto" style="text-align: right;">
+                <ion-input 
+                  type="number" 
+                  inputmode="decimal" 
+                  min="0"
+                  max="10000"
+                  class="w-2rem"
+                  [(ngModel)]="shownData().burntEnergy"
+                  (ionBlur)="saveBurntValue()">
+                </ion-input>
+              </ion-col>
+              <ion-col size="auto" style="text-align: left;">
+                {{ postFixes()[0]}}     
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        }
+        @else{
+          <ion-grid class="ion-no-padding" style="width: 100%;">
+            <ion-row class="ion-align-items-center ion-justify-content-between">
+              <ion-col size="auto" style="text-align: left;">
+                {{'Yakılan Kalori :'+shownData().burntEnergy + postFixes()[0]}} 
+              </ion-col>
+              <ion-col size="auto" style="text-align: right;">
+                <ion-button expand="block" fill="outline" (click)="openEdit()">
+                  <ion-icon slot="icon-only" [icon]="pencilIcon"></ion-icon>
+                </ion-button> 
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        }     
+      </ion-card-subtitle> 
+      <ion-card-subtitle [ngStyle]="{'color': (totalCalorie() > shownData().burntEnergy)  ? 'red' : 'green'}">
+        Kalori Açığı : {{ (shownData().burntEnergy - totalCalorie()) +  postFixes()[0] }}
+      </ion-card-subtitle>
   </ion-card-header>
   <ion-card-content>
     Karbonhidrat : {{ totalCarb() + postFixes()[1] }} |
