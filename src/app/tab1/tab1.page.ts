@@ -1,12 +1,13 @@
-import { DatePipe, formatDate, NgStyle } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { DatePipe, NgStyle } from '@angular/common';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonInput } from '@ionic/angular/standalone';
-import { DailyValues, MealTypes, MealValues } from '../data/foodValues';
+import { DailyValues, MealTypes } from '../data/foodValues';
 import { chevronBackOutline, chevronForwardCircleOutline, chevronForwardOutline, pencilOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { Router } from '@angular/router';
 import { StorageService } from '../services/storage';
 import { FormsModule } from '@angular/forms';
+import { Util } from '../util';
 
 
 @Component({
@@ -17,8 +18,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class Tab1Page implements OnInit {
 
-  protected postFixes = signal<string[]>(["kcal","gram"]);
-  protected dateFormat = signal<string>('d MMMM yyyy');
+  protected postFixes = signal<string[]>(Util.postFixes);
+  protected dateFormat = signal<string>(Util.timeFormat);
   protected shownData = signal<DailyValues>(new DailyValues());
   
   protected totalCalorie = computed<number>(() =>
@@ -49,7 +50,7 @@ export class Tab1Page implements OnInit {
     this.shownData().extraIntake.fatIntake 
   );
 
-  protected meals = signal<MealTypes[]>([]);
+  protected meals = signal<MealTypes[]>(Util.mealTypes);
   protected isEdit = signal<boolean>(false);
 
   backIcon = chevronBackOutline;
@@ -62,17 +63,6 @@ export class Tab1Page implements OnInit {
 
   ngOnInit(): void { 
     this.setData(new Date());
-    this.meals.set(this.getMealTypes());
-  }
-
-  private getMealTypes(): MealTypes[]{
-    let arr : MealTypes[] = [];
-    arr.push({title: "Sabah", intakeType:"morningIntake"});
-    arr.push({title: "Öğle", intakeType:"noonIntake"});
-    arr.push({title: "Akşam", intakeType:"eveningIntake"});
-    arr.push({title: "Ekstra", intakeType:"extraIntake"});
-
-    return arr;
   }
 
   private async getDataFromLocalStorage(key: string) : Promise<DailyValues> {
@@ -87,7 +77,7 @@ export class Tab1Page implements OnInit {
   }
 
   protected async setData(willDate : Date){
-    let key = this.formatDateKey(willDate);
+    let key = Util.formatDateKey(willDate);
     let data = await this.getDataFromLocalStorage(key);
     if(data != null && data != undefined) this.shownData.set(data!);
     else {
@@ -105,21 +95,22 @@ export class Tab1Page implements OnInit {
    this.checkAndGetFromTheData(1);
   }
 
-  private formatDateKey(date : Date) : string {
-     return formatDate(date, 'MM-dd-yyyy', 'en-US');
-  }
-
-  protected editMeal(code :string){
-    this.router.navigate(['/edit-meal', code, this.formatDateKey(this.shownData().date)]);
+  protected editMeal(code :string){ 
+    this.router.navigate(['/edit-meal', code, Util.formatDateKey(this.shownData().date)], {
+      state: { shownData: this.shownData() } 
+    });
   }
 
   protected openEdit(){
     this.isEdit.set(true);
   }
-
+/*
+  ionViewWillEnter() {
+    this.shownData.update((prev) => ({ ...prev }));
+  }
+*/
   protected saveBurntValue(){
-    this.storageService.set(this.formatDateKey(this.shownData().date), this.shownData());
+    this.storageService.set(Util.formatDateKey(this.shownData().date), this.shownData());
     this.isEdit.set(false);
   }
-
 }

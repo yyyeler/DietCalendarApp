@@ -1,9 +1,10 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonGrid, IonCardTitle, IonCol, IonRow, IonItem, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { Criteria, DailyValues, Decode, MealValues } from '../data/foodValues';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../services/storage';
-import { CommonModule, DatePipe, DecimalPipe, formatDate } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
+import { Util } from '../util';
 
 @Component({
   selector: 'app-tab2',
@@ -16,12 +17,12 @@ export class Tab2Page implements OnInit{
 
   constructor(private storageService: StorageService, private decimalPipe: DecimalPipe) { }
 
-  protected postFixes = signal<string[]>(["kcal","gram"]);
-  protected titles = signal<string[]>(["Alınan Kal.","Yakılan Kal.","Kal. Açığı","Protein","K.hidrat","Yağ"]);
+  protected postFixes = signal<string[]>(Util.postFixes);
+  protected titles = signal<string[]>(Util.intakeTitles);
   protected krt = signal<Criteria>(new Criteria());
-  protected showingOptions = signal<Decode[]>([{'code' :'0', 'val': 'Yıl'},{ 'code' :'1', 'val': 'Ay'},{ 'code' :'2', 'val': 'Hafta'}]);
+  protected showingOptions = signal<Decode[]>(Util.showingOptions);
   protected timeOptions = signal<Decode[]>([]);
-  protected dateFormat = signal<string>('d MMMM yyyy');
+  protected dateFormat = signal<string>(Util.timeFormat);
 
   protected dataList = signal<DailyValues[]>([]);
 
@@ -45,60 +46,25 @@ export class Tab2Page implements OnInit{
     return this.krt().summary == '0' ? a/this.dataList().length : a;
   }
   
-  protected readonly months : Decode[] = [{'code' :'01', 'val': 'Ocak'},
-                                          {'code' :'02', 'val': 'Şubat'},
-                                          {'code' :'03', 'val': 'Mart'},
-                                          {'code' :'04', 'val': 'Nisan'},
-                                          {'code' :'05', 'val': 'Mayıs'},
-                                          {'code' :'06', 'val': 'Haziran'},
-                                          {'code' :'07', 'val': 'Temmuz'},
-                                          {'code' :'08', 'val': 'Ağustos'},
-                                          {'code' :'09', 'val': 'Eylül'},
-                                          {'code' :'10', 'val': 'Ekim'},
-                                          {'code' :'11', 'val': 'Kasım'},
-                                          {'code' :'12', 'val': 'Aralık'}];
-
-                                                
-  protected years : Decode[] = [];
-                                                
-  protected readonly weeks : Decode[] = [ {'code' :'-2', 'val': 'Önceki Hafta'},
-                                          {'code' :'-1', 'val': 'Geçen Hafta'},
-                                          {'code' :'0',  'val': 'Bu Hafta'}];
-
-  protected readonly summaryOptions : Decode[] = [{'code' :'0', 'val': 'Ortalama Veri'},
-                                                  {'code' :'1', 'val': 'Toplam Veri'}];
-
   ngOnInit(): void {
-    this.getYearOptions();
-
     this.krt().showing = '1';
     this.krt().summary = '0';
     this.showingOptionChanged();
   }
 
-  private getYearOptions(){
-    let a = new Date();
-    let years: Decode[] = [];
-    for(let i=0;i<5;i++) {
-      let key = a.getFullYear()+"";
-      years.push({'code' : key , 'val': key});
-      a.setFullYear(a.getFullYear()-1);
-    }
-    this.years = years;
-  }
-
+  
   protected getTimeOptions(){
     switch(this.krt().showing){
-      case '0': this.timeOptions.set(this.years); break;
-      case '1': this.timeOptions.set(this.months); break;
-      case '2': this.timeOptions.set(this.weeks); break;
+      case '0': this.timeOptions.set(Util.years); break;
+      case '1': this.timeOptions.set(Util.months); break;
+      case '2': this.timeOptions.set(Util.weeks); break;
     }
   }
 
   protected setTimeKrt(){
     if(this.krt().showing == '2') this.krt().time = '0';
     else if(this.krt().showing == '0') this.krt().time = new Date().getFullYear()+"";
-    else this.krt().time = this.getCurMonth();
+    else this.krt().time = Util.currentMonth;
  }
 
   protected showingOptionChanged(){
@@ -111,19 +77,14 @@ export class Tab2Page implements OnInit{
     this.getData();
   }
 
-  protected getCurMonth() : string {
-    let curMonth = new Date().getMonth();
-    curMonth++;
-    return curMonth>9 ? curMonth+"" : "0"+curMonth;
-  }
-
+ 
   private async getData(){
      if(this.krt().showing == "0"){
       let list: DailyValues[] = [];
       let date = new Date(+this.krt().time,0,1);
       while(this.krt().time === date.getFullYear()+""){
         date.setDate(date.getDate()+1);        
-        let key = this.formatDateKey(date);
+        let key = Util.formatDateKey(date);
         let item = await this.getDataFromLocalStorage(key);
         if(item != null) list.push(item);
       }
@@ -136,7 +97,7 @@ export class Tab2Page implements OnInit{
       let date = new Date(dateTemp.getFullYear(), +this.krt().time-1, 0);
       for(let a=1;a<=monthLastDate;a++){
         date.setDate(date.getDate()+1);            
-        let key = this.formatDateKey(date);
+        let key = Util.formatDateKey(date);
         let item = await this.getDataFromLocalStorage(key);
         if(item != null) list.push(item);
       }
@@ -150,16 +111,12 @@ export class Tab2Page implements OnInit{
       date.setDate(date.getDate()+diff+distanceToMonday);
       for(let a=1;a<=7;a++){
         date.setDate(date.getDate()+1);        
-        let key = this.formatDateKey(date);
+        let key = Util.formatDateKey(date);
         let item = await this.getDataFromLocalStorage(key);
         if(item != null) list.push(item);
       }
       this.dataList.set(list);
     }
-  }
-
-  private formatDateKey(date : Date) : string {
-     return formatDate(date, 'MM-dd-yyyy', 'en-US');
   }
 
   private async getDataFromLocalStorage(key: string) : Promise<DailyValues> {
