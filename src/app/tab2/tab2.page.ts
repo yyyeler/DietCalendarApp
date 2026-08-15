@@ -23,6 +23,7 @@ export class Tab2Page implements OnInit{
   protected showingOptions = signal<Decode[]>(Util.showingOptions);
   protected timeOptions = signal<Decode[]>([]);
   protected dateFormat = signal<string>(Util.timeFormat);
+  protected summaryOptions = signal<Decode[]>(Util.summaryOptions);
 
   protected dataList = signal<DailyValues[]>([]);
 

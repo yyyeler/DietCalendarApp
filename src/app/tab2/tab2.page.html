@@ -43,7 +43,7 @@
         <ion-col style="text-align: center;">          
           <ion-item>
             <ion-select [(ngModel)]="krt().summary">
-              @for (item of summaryOptions; track $index) { <ion-select-option [value]="item.code">{{ item.val }}</ion-select-option>  }
+              @for (item of summaryOptions(); track $index) { <ion-select-option [value]="item.code">{{ item.val }}</ion-select-option>  }
             </ion-select>
           </ion-item>
         </ion-col>
