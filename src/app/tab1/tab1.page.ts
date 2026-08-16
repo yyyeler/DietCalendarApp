@@ -107,7 +107,10 @@ export class Tab1Page implements OnInit {
    
   protected async ionViewWillEnter() {
     const data = await this.storageService.get(Util.formatDateKey(this.shownData().date));
-    if (data) { this.shownData.set(data); }
+    if (data) {   this.shownData.update({
+      ...new DailyValues(), 
+      ...data              
+    });; }
   }
 
   protected saveBurntValue(){
