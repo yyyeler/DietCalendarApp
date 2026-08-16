@@ -28,11 +28,47 @@ export class Tab2Page implements OnInit{
   protected dataList = signal<DailyValues[]>([]);
 
   protected totalCalorieBurnt = computed<number>(() => { return this.dataList().reduce((sum, item) => sum + (item.burntEnergy ?? 0), 0); });
-  protected totalCalorieDef = computed<number>(() => { return this.totalCalorieBurnt() - this.dataList().reduce((sum, item) => sum + (item.morningIntake['calorieIntake']!+ item.noonIntake['calorieIntake']!+ item.eveningIntake['calorieIntake']!+ item.extraIntake['calorieIntake']!), 0); });
-  protected totalProteinIntake = computed<number>(() => { return this.dataList().reduce((sum, item) => sum + (item.morningIntake['proteinIntake']!+ item.noonIntake['proteinIntake']!+ item.eveningIntake['proteinIntake']!+ item.extraIntake['proteinIntake']!), 0); });
-  protected totalFatIntake = computed<number>(() => { return this.dataList().reduce((sum, item) => sum + (item.morningIntake['fatIntake']!+ item.noonIntake['fatIntake']!+ item.eveningIntake['fatIntake']!+ item.extraIntake['fatIntake']!), 0); });
-  protected totalCalorieIntake = computed<number>(() => { return this.dataList().reduce((sum, item) => sum + (item.morningIntake['calorieIntake']!+ item.noonIntake['calorieIntake']!+ item.eveningIntake['calorieIntake']!+ item.extraIntake['calorieIntake']!), 0); });
-  protected totalCarbsIntake = computed<number>(() => { return this.dataList().reduce((sum, item) => sum + (item.morningIntake['carbsIntake']!+ item.noonIntake['carbsIntake']!+ item.eveningIntake['carbsIntake']!+ item.extraIntake['carbsIntake']!), 0); });
+  protected totalCalorieDef = computed<number>(() => { return this.totalCalorieBurnt() - this.totalCalorieIntake(); });
+
+  protected totalCalorieIntake = computed<number>(() => { return this.dataList().reduce((sum, item) => 
+      sum + 
+      (item.morningIntake?.calorieIntake ?? 0) + 
+      (item.noonIntake?.calorieIntake ?? 0) + 
+      (item.eveningIntake?.calorieIntake ?? 0) + 
+      (item.extraIntake?.calorieIntake ?? 0), 0
+    ); 
+  });
+
+  
+  protected totalProteinIntake = computed<number>(() => { 
+    return this.dataList().reduce((sum, item) => 
+      sum + 
+      (item.morningIntake?.proteinIntake ?? 0) + 
+      (item.noonIntake?.proteinIntake ?? 0) + 
+      (item.eveningIntake?.proteinIntake ?? 0) + 
+      (item.extraIntake?.proteinIntake ?? 0), 0
+    ); 
+  });
+
+  protected totalFatIntake = computed<number>(() => { 
+    return this.dataList().reduce((sum, item) => 
+      sum + 
+      (item.morningIntake?.fatIntake ?? 0) + 
+      (item.noonIntake?.fatIntake ?? 0) + 
+      (item.eveningIntake?.fatIntake ?? 0) + 
+      (item.extraIntake?.fatIntake ?? 0), 0
+    ); 
+  });
+
+  protected totalCarbsIntake = computed<number>(() => { 
+    return this.dataList().reduce((sum, item) => 
+      sum + 
+      (item.morningIntake?.carbsIntake ?? 0) + 
+      (item.noonIntake?.carbsIntake ?? 0) + 
+      (item.eveningIntake?.carbsIntake ?? 0) + 
+      (item.extraIntake?.carbsIntake ?? 0), 0
+    ); 
+  });
 
   protected avgCalorieBurnt = computed<number>(() => this.totalCalorieBurnt() / this.dataList().length);
   protected avgCalorieDef = computed<number>(() => this.totalCalorieDef() / this.dataList().length);
@@ -40,12 +76,6 @@ export class Tab2Page implements OnInit{
   protected avgCalorieIntake = computed<number>(() => this.totalCalorieIntake() / this.dataList().length);
   protected avgFatIntake = computed<number>(() => this.totalFatIntake() / this.dataList().length);
   protected avgCarbsIntake = computed<number>(() =>this.totalCarbsIntake() / this.dataList().length);
-  
-  protected getAllTotalVals(foodType: keyof MealValues) : number {
-    let a = 0;
-    this.dataList().forEach(item => a += item.morningIntake[foodType]!+ item.noonIntake[foodType]!+ item.eveningIntake[foodType]!+ item.extraIntake[foodType]!);
-    return this.krt().summary == '0' ? a/this.dataList().length : a;
-  }
   
   ngOnInit(): void {
     this.krt().showing = '1';
@@ -125,7 +155,10 @@ export class Tab2Page implements OnInit{
   }
   
   protected getTotalVals(item: DailyValues, foodType: keyof MealValues) : number{
-    return item.morningIntake[foodType]!+ item.noonIntake[foodType]!+ item.eveningIntake[foodType]!+ item.extraIntake[foodType]!;
+      return (item.morningIntake?.[foodType] ?? 0) + 
+         (item.noonIntake?.[foodType] ?? 0) + 
+         (item.eveningIntake?.[foodType] ?? 0) + 
+         (item.extraIntake?.[foodType] ?? 0);
   }
 
   protected get calorieIntake(){ return this.krt().summary == '0' ? this.avgCalorieIntake() : this.totalCalorieIntake(); }
