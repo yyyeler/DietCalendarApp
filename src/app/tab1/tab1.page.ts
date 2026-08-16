@@ -23,31 +23,31 @@ export class Tab1Page implements OnInit {
   protected shownData = signal<DailyValues>(new DailyValues());
   
   protected totalCalorie = computed<number>(() =>
-    this.shownData().morningIntake.calorieIntake +
-    this.shownData().noonIntake.calorieIntake +  
-    this.shownData().eveningIntake.calorieIntake +
-    this.shownData().extraIntake.calorieIntake 
+    (this.shownData().morningIntake.calorieIntake ?? 0) +
+    (this.shownData().noonIntake.calorieIntake ?? 0) +  
+    (this.shownData().eveningIntake.calorieIntake ?? 0) +
+    (this.shownData().extraIntake.calorieIntake ?? 0)
   );
 
   protected totalProtein = computed<number>(() =>
-    this.shownData().morningIntake.proteinIntake +
-    this.shownData().noonIntake.proteinIntake +  
-    this.shownData().eveningIntake.proteinIntake +  
-    this.shownData().extraIntake.proteinIntake 
+    (this.shownData().morningIntake.proteinIntake ?? 0) +
+    (this.shownData().noonIntake.proteinIntake ?? 0) +  
+    (this.shownData().eveningIntake.proteinIntake ?? 0) +  
+    (this.shownData().extraIntake.proteinIntake ?? 0)
   );
 
   protected totalCarb = computed<number>(() =>
-    this.shownData().morningIntake.carbsIntake +
-    this.shownData().noonIntake.carbsIntake +  
-    this.shownData().eveningIntake.carbsIntake +  
-    this.shownData().extraIntake.carbsIntake 
+    (this.shownData().morningIntake.carbsIntake ?? 0) +
+    (this.shownData().noonIntake.carbsIntake ?? 0) +  
+    (this.shownData().eveningIntake.carbsIntake ?? 0) +  
+    (this.shownData().extraIntake.carbsIntake ?? 0)
   );
 
   protected totalFat = computed<number>(() =>
-    this.shownData().morningIntake.fatIntake  +
-    this.shownData().noonIntake.fatIntake +  
-    this.shownData().eveningIntake.fatIntake +  
-    this.shownData().extraIntake.fatIntake 
+    (this.shownData().morningIntake.fatIntake ?? 0)  +
+    (this.shownData().noonIntake.fatIntake ?? 0) +  
+    (this.shownData().eveningIntake.fatIntake ?? 0) +  
+    (this.shownData().extraIntake.fatIntake ?? 0)
   );
 
   protected meals = signal<MealTypes[]>(Util.mealTypes);
@@ -104,11 +104,12 @@ export class Tab1Page implements OnInit {
   protected openEdit(){
     this.isEdit.set(true);
   }
-/*
-  ionViewWillEnter() {
-    this.shownData.update((prev) => ({ ...prev }));
+   
+  protected async ionViewWillEnter() {
+    const data = await this.storageService.get(Util.formatDateKey(this.shownData().date));
+    if (data) { this.shownData.set(data); }
   }
-*/
+
   protected saveBurntValue(){
     this.storageService.set(Util.formatDateKey(this.shownData().date), this.shownData());
     this.isEdit.set(false);

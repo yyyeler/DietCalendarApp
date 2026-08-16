@@ -1,17 +1,11 @@
 export interface MealValues {
-    calorieIntake: number;
-    proteinIntake: number;
-    carbsIntake: number;
-    fatIntake: number;
+    calorieIntake?: number;
+    proteinIntake?: number;
+    carbsIntake?: number;
+    fatIntake?: number;
 }
 
 export class MealValues {
-    constructor(){
-        this.calorieIntake = 0;
-        this.proteinIntake = 0;
-        this.carbsIntake = 0;
-        this.fatIntake = 0;
-    }
 }
 
 export interface DailyValues {
@@ -20,7 +14,7 @@ export interface DailyValues {
     noonIntake: MealValues;
     eveningIntake: MealValues;
     extraIntake: MealValues;
-    burntEnergy: number;
+    burntEnergy?: number;
 }
 
 export class DailyValues {
@@ -29,7 +23,6 @@ export class DailyValues {
         this.noonIntake = new MealValues();
         this.eveningIntake = new MealValues();
         this.extraIntake = new MealValues();
-        this.burntEnergy = 0;
     }
 }
 

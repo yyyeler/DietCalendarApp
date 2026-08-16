@@ -31,7 +31,7 @@
 
 <ion-card>
   <ion-card-header>
-    <ion-card-title>Toplam</ion-card-title>
+    <ion-card-title class="mb-3">Toplam</ion-card-title>
        <ion-card-subtitle>
         Kalori : {{ totalCalorie() + postFixes()[0] }}
       </ion-card-subtitle>
@@ -47,7 +47,9 @@
                   type="number" 
                   inputmode="decimal" 
                   min="0"
+                  placeholder="0"
                   max="10000"
+                  min="0"
                   class="w-2rem"
                   [(ngModel)]="shownData().burntEnergy"
                   (ionBlur)="saveBurntValue()">
@@ -63,7 +65,7 @@
           <ion-grid class="ion-no-padding" style="width: 100%;">
             <ion-row class="ion-align-items-center ion-justify-content-between">
               <ion-col size="auto" style="text-align: left;">
-                {{'Yakılan Kalori :'+shownData().burntEnergy + postFixes()[0]}} 
+                {{'Yakılan Kalori :'+(shownData().burntEnergy ?? 0) + postFixes()[0]}} 
               </ion-col>
               <ion-col size="auto" style="text-align: right;">
                 <ion-button expand="block" fill="outline" (click)="openEdit()">
@@ -74,8 +76,8 @@
           </ion-grid>
         }     
       </ion-card-subtitle> 
-      <ion-card-subtitle [ngStyle]="{'color': (totalCalorie() > shownData().burntEnergy)  ? 'red' : 'green'}">
-        Kalori Açığı : {{ (shownData().burntEnergy - totalCalorie()) +  postFixes()[0] }}
+      <ion-card-subtitle [ngStyle]="{'color': (totalCalorie() > (shownData().burntEnergy ?? 0) )  ? 'red' : 'green'}">
+        Kalori Açığı : {{ ((shownData().burntEnergy ?? 0) - totalCalorie()) +  postFixes()[0] }}
       </ion-card-subtitle>
   </ion-card-header>
   <ion-card-content>
@@ -101,13 +103,13 @@
         </ion-row>
       </ion-grid>
       <ion-card-subtitle>
-        Kalori : {{ shownData()[meal.intakeType].calorieIntake + postFixes()[0] }}
+        Kalori : {{ (shownData()[meal.intakeType].calorieIntake ?? 0) + postFixes()[0] }}
       </ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      Karbonhidrat : {{ shownData()[meal.intakeType].carbsIntake + postFixes()[1] }} |
-      Protein : {{ shownData()[meal.intakeType].proteinIntake + postFixes()[1] }} |
-      Yağ : {{ shownData()[meal.intakeType].fatIntake + postFixes()[1] }} 
+      Karbonhidrat : {{ (shownData()[meal.intakeType].carbsIntake ?? 0) + postFixes()[1] }} |
+      Protein : {{ (shownData()[meal.intakeType].proteinIntake ?? 0) + postFixes()[1] }} |
+      Yağ : {{ (shownData()[meal.intakeType].fatIntake ?? 0) + postFixes()[1] }} 
     </ion-card-content>
   </ion-card>
 }

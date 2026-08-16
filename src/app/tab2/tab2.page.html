@@ -91,10 +91,10 @@
         </ion-row>
         <ion-row class="ion-align-items-center ion-font-size-small">
           <ion-col size="3"> {{ titles()[2] + ' : ' }} </ion-col>
-          <ion-col size="3"> {{ (item.burntEnergy - getTotalVals(item,'calorieIntake')) + postFixes()[0] }} </ion-col>
+          <ion-col size="3"> {{ ((item.burntEnergy ?? 0) - getTotalVals(item,'calorieIntake')) + postFixes()[0] }} </ion-col>
           <ion-col size="3"> {{ titles()[3] + ' : ' }} </ion-col>
           <ion-col size="3"> {{ getTotalVals(item,'proteinIntake') + postFixes()[1]}} </ion-col>
-        </ion-row>
+        </ion-row>W
         <ion-row class="ion-align-items-center">
           <ion-col size="3"> {{ titles()[4] + ' : ' }}  </ion-col>
           <ion-col size="3"> {{ getTotalVals(item,'carbsIntake') + postFixes()[1] }} </ion-col>
